@@ -25,13 +25,20 @@ exports.getAllUser = async (req,res,next) => {
 
 exports.editUser = async (req,res,next) => {
     try{
-        await db.Users.update(req.body, {
-            where: {
-                id: req.params.id
-            }
-        });
-        res.json({
-            msg: 'User updated.'
+        await db.Users.findByPk(req.params.id).then(function (result) {
+            if (!!result) {
+                db.Users.update(req.body, {
+                    where: {
+                        id: req.params.id
+                    }
+                });
+                res.status(200).json({
+                    msg: 'User updated.'
+                });
+            } 
+            return res.status(404).json({
+                msg: 'User not found.'
+            });
         });
     }catch (e) {
         next(e);
@@ -40,14 +47,23 @@ exports.editUser = async (req,res,next) => {
 
 exports.deleteUser = async (req,res,next) => {
     try{
-        await db.Users.destroy({
-            where: {
-                id: req.params.id
-            }
+        await db.Users.findByPk(req.params.id).then(function (result) {
+            if (!!result) {
+                db.Users.destroy({
+                    where: {
+                        id: req.params.id
+                    }
+                });
+                res.status(200).json({
+                    msg: 'User deleted.'
+                });
+            } 
+            return res.status(404).json({
+                msg: 'User not found.'
+            });
         });
-        res.json({
-            msg: 'User deleted.'
-        });
+
+
     }catch (e) {
         next(e);
     }
@@ -60,7 +76,12 @@ exports.getUser = async (req,res,next) => {
                 id: req.params.id
             }
         });
-        res.json(user);
+        if(!!user){
+            res.json(user);
+        }
+        return res.status(404).json({
+            msg: 'User not found.'
+        });
     }
     catch (e) {
         next(e);

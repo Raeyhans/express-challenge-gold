@@ -14,15 +14,15 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'order_id',
         as: 'order',
       })
-      this.belongsTo(models.Products, {
-        foreignKey: 'product_id',
-        as: 'product',
+      this.belongsTo(models.Items, {
+        foreignKey: 'item_id',
+        as: 'item',
       })
     }
   }
   Orderdetails.init({
     order_id: DataTypes.INTEGER,
-    product_id: DataTypes.INTEGER,
+    item_id: DataTypes.INTEGER,
     price: DataTypes.INTEGER,
     qty: DataTypes.INTEGER
   }, {

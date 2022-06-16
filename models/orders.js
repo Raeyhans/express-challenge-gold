@@ -24,13 +24,16 @@ module.exports = (sequelize, DataTypes) => {
     user_id: DataTypes.INTEGER,
     total: DataTypes.INTEGER,
     status: DataTypes.STRING,
-    created_at: DataTypes.DATE
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE,
+    updated_by: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Orders',
     tableName: 'orders',
     createdAt: 'created_at',
     updatedAt: 'updated_at',
+    updatedBy: 'updated_by',
   });
   return Orders;
 };

@@ -1,26 +1,33 @@
-const { set } = require('../app');
+const {
+    set
+} = require('../app');
 const db = require('../models');
 
 exports.createOrder = async (req, res, next) => {
     try {
-        const { 
-            user : { id: userId },
-            body : { orders, products } 
+        const {
+            user: {
+                id: userId
+            },
+            body: {
+                orders,
+                items
+            }
         } = req;
 
-        const total_amount = products.reduce((acc, product) => {
-            return acc + product.price * product.qty;
+        const total_amount = items.reduce((acc, item) => {
+            return acc + item.price * item.qty;
         }, 0);
-        
+
         const data = {
             user_id: userId,
             total: total_amount,
-            status: "UNPAID",
-            orderdetails: products.map(product => {
+            status: req.body.orders.status,
+            orderdetails: items.map(item => {
                 return {
-                    product_id: product.id,
-                    qty: product.qty,
-                    price: product.price,
+                    item_id: item.id,
+                    qty: item.qty,
+                    price: item.price,
                 }
             })
         }
@@ -29,15 +36,6 @@ exports.createOrder = async (req, res, next) => {
                 model: db.Orderdetails,
                 as: 'orderdetails',
             }]
-        });
-
-        await db.Products.update(req.body, {
-            where: {
-                id: req.body.id
-            },
-            set: {
-                qty: req.body.qty
-            }
         });
         res.json(order);
     } catch (e) {
@@ -54,32 +52,44 @@ exports.getOrders = async (req, res, next) => {
     }
 }
 
-exports.getOneOrder = async (req,res,next) => {
-    try{
+exports.getOneOrder = async (req, res, next) => {
+    try {
         const user = await db.Orders.findOne({
             where: {
                 id: req.params.id
             }
         });
-        res.json(user);
-    }
-    catch (e) {
+        if (!!user) {
+            res.json(user);
+        }
+        return res.status(404).json({
+            msg: 'Order not found.'
+        });
+            
+    } catch (e) {
         next(e);
     }
 }
 
-exports.updateOrder = async (req,res,next) => {
-    try{
-        await db.Orders.update(req.body, {
-            where: {
-                id: req.params.id
-            }
+exports.updateOrder = async (req, res, next) => {
+    try {
+        await db.Orders.findByPk(req.params.id).then(function (result) {
+            if (!!result) {
+                db.Orders.update(req.body, {
+                    where: {
+                        id: req.params.id
+                    }
+                });
+                res.status(200).json({
+                    msg: 'Status updated.',
+                    status: req.body.status
+                });
+            } 
+            return res.status(404).json({
+                msg: 'Order not found.'
+            });
         });
-        res.json({
-            msg: 'Status updated.',
-            status: req.body.status
-        });
-    }catch (e) {
+    } catch (e) {
         next(e);
     }
 }
