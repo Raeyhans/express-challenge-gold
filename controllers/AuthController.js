@@ -34,6 +34,7 @@ exports.loginPost = async (req, res, next) => {
                 id: user.id,
              }, 'secret');
             return res.json({
+                status: 200,
                 msg: 'You have successfully logged in.',
                 token
             });
@@ -67,7 +68,8 @@ exports.registerPost = async (req, res, next) => {
             }});
 
         if (user != null) {
-            return res.status(400).json({
+            return res.json({
+                status: 400,
                 error: 'Please choose another username.'
             });
         }
@@ -82,6 +84,7 @@ exports.registerPost = async (req, res, next) => {
         });
         
         res.json({
+            status: 201,
             msg: 'You have successfully registered.'
         });
 

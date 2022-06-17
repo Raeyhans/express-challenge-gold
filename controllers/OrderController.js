@@ -1,6 +1,3 @@
-const {
-    set
-} = require('../app');
 const db = require('../models');
 
 exports.createOrder = async (req, res, next) => {
@@ -10,8 +7,7 @@ exports.createOrder = async (req, res, next) => {
                 id: userId
             },
             body: {
-                orders,
-                items
+                orders, items
             }
         } = req;
 
@@ -37,7 +33,10 @@ exports.createOrder = async (req, res, next) => {
                 as: 'orderdetails',
             }]
         });
-        res.json(order);
+        return res.json({
+            status: 201, 
+            data: order
+        });
     } catch (e) {
         next(e);
     }
@@ -60,9 +59,10 @@ exports.getOneOrder = async (req, res, next) => {
             }
         });
         if (!!user) {
-            res.json(user);
+            return res.json(user);
         }
-        return res.status(404).json({
+        return res.json({
+            status: 404,
             msg: 'Order not found.'
         });
             
@@ -80,12 +80,14 @@ exports.updateOrder = async (req, res, next) => {
                         id: req.params.id
                     }
                 });
-                res.status(200).json({
+                return res.json({
+                    status: 200,
                     msg: 'Status updated.',
                     status: req.body.status
                 });
             } 
-            return res.status(404).json({
+            return res.json({
+                status: 404,
                 msg: 'Order not found.'
             });
         });

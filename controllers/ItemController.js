@@ -27,11 +27,13 @@ exports.editItem = async (req,res,next) => {
                         id: req.params.id
                     }
                 });
-                res.status(200).json({
+                return res.json({
+                    status: 200,
                     msg: 'Item updated.'
                 });
             } 
-            return res.status(404).json({
+            return res.json({
+                status: 404,
                 msg: 'Item not found.'
             });
         });
@@ -47,7 +49,8 @@ exports.deleteItem = async (req,res,next) => {
                 id: req.params.id
             }
         });
-        res.json({
+        return res.json({
+            status: 200,
             msg: 'Item deleted.'
         });
     }catch (e) {
@@ -63,9 +66,13 @@ exports.getItem = async (req,res,next) => {
             }
         });
         if(!!item){
-            res.json(item);
+            return res.json({
+                status: 200,
+                item
+            });
         }
-        return res.status(404).json({
+        return res.json({
+            status: 404,
             msg: 'Item not found.'
         });
     }

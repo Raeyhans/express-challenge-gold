@@ -32,11 +32,13 @@ exports.editUser = async (req,res,next) => {
                         id: req.params.id
                     }
                 });
-                res.status(200).json({
+                return res.json({
+                    status: 200,
                     msg: 'User updated.'
                 });
             } 
-            return res.status(404).json({
+            return res.json({
+                status: 404,
                 msg: 'User not found.'
             });
         });
@@ -54,11 +56,13 @@ exports.deleteUser = async (req,res,next) => {
                         id: req.params.id
                     }
                 });
-                res.status(200).json({
+                return res.json({
+                    status: 200,
                     msg: 'User deleted.'
                 });
             } 
-            return res.status(404).json({
+            return res.json({
+                status: 404,
                 msg: 'User not found.'
             });
         });
@@ -77,9 +81,10 @@ exports.getUser = async (req,res,next) => {
             }
         });
         if(!!user){
-            res.json(user);
+            return res.json(user);
         }
-        return res.status(404).json({
+        return res.json({
+            status: 404,
             msg: 'User not found.'
         });
     }
